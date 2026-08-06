@@ -42,7 +42,13 @@ export const Route = createFileRoute("/product/$slug")({
 });
 
 function ProductPage() {
-  const { product, category, variants, reviews, related } = Route.useLoaderData();
+  const { product, category, variants, reviews, related } = Route.useLoaderData() as {
+    product: Product;
+    category: Category | null;
+    variants: Variant[];
+    reviews: Review[];
+    related: Product[];
+  };
   const cart = useCart();
   const [size, setSize] = useState<string | null>(null);
   const [zoom, setZoom] = useState(false);

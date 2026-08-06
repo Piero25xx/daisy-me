@@ -39,7 +39,11 @@ const SORTS = [
 ] as const;
 
 function CollectionPage() {
-  const { category, products, variants } = Route.useLoaderData();
+  const { category, products, variants } = Route.useLoaderData() as {
+    category: Category;
+    products: Product[];
+    variants: Variant[];
+  };
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<(typeof SORTS)[number]["id"]>("newest");
   const [size, setSize] = useState<string | null>(null);
