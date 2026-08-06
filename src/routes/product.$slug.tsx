@@ -2,11 +2,19 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ProductCard } from "@/components/site/ProductCard";
 import { getProduct } from "@/lib/catalog.functions";
-import { formatPrice } from "@/lib/catalog-types";
+import { formatPrice, type Category, type Product, type Review, type Variant } from "@/lib/catalog-types";
 import { useCart } from "@/lib/cart";
 
 export const Route = createFileRoute("/product/$slug")({
-  loader: async ({ params }) => {
+  loader: async ({
+    params,
+  }): Promise<{
+    product: Product;
+    category: Category | null;
+    variants: Variant[];
+    reviews: Review[];
+    related: Product[];
+  }> => {
     const data = await getProduct({ data: { slug: params.slug } });
     if (!data) throw notFound();
     return data;
@@ -40,7 +48,7 @@ function ProductPage() {
   const [zoom, setZoom] = useState(false);
   const [added, setAdded] = useState(false);
 
-  const sizes = useMemo(() => [...new Set(variants.map((variant) => variant.size))], [variants]);
+  const sizes = useMemo<string[]>(() => [...new Set(variants.map((variant) => variant.size))], [variants]);
   const stock = useMemo(
     () => variants.filter((variant) => !size || variant.size === size).reduce((sum, v) => sum + v.stock, 0),
     [variants, size],

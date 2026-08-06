@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ProductCard } from "@/components/site/ProductCard";
 import { listProducts } from "@/lib/catalog.functions";
+import type { Product } from "@/lib/catalog-types";
 
 export const Route = createFileRoute("/")({
-  loader: async () => ({ products: await listProducts({ data: { limit: 4 } }) }),
+  loader: async (): Promise<{ products: Product[] }> => ({
+    products: await listProducts({ data: { limit: 4 } }),
+  }),
   head: () => ({
     meta: [
       { title: "Daisy — Premium Fashion, Quietly Made" },

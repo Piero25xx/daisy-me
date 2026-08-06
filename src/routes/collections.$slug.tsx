@@ -2,9 +2,10 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ProductCard } from "@/components/site/ProductCard";
 import { getCollection } from "@/lib/catalog.functions";
+import type { Category, Product, Variant } from "@/lib/catalog-types";
 
 export const Route = createFileRoute("/collections/$slug")({
-  loader: async ({ params }) => {
+  loader: async ({ params }): Promise<{ category: Category; products: Product[]; variants: Variant[] }> => {
     const data = await getCollection({ data: { slug: params.slug } });
     if (!data) throw notFound();
     return data;
@@ -55,12 +56,12 @@ function CollectionPage() {
     return map;
   }, [variants]);
 
-  const sizes = useMemo(() => {
+  const sizes = useMemo<string[]>(() => {
     const ids = new Set(products.map((product) => product.id));
     return [...new Set(variants.filter((v) => ids.has(v.product_id)).map((v) => v.size))];
   }, [products, variants]);
 
-  const colors = useMemo(
+  const colors = useMemo<string[]>(
     () => [...new Set(products.map((product) => product.subtitle).filter(Boolean) as string[])],
     [products],
   );
